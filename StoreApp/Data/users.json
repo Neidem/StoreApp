@@ -1,0 +1,12 @@
+[
+  {
+    "Username": "admin",
+    "PasswordHash": "81dc9bdb52d04dc20036dbd8313ed055",
+    "Role": "admin"
+  },
+  {
+    "Username": "nikita",
+    "PasswordHash": "098f6bcd4621d373cade4e832627b4f6",
+    "Role": "customer"
+  }
+]

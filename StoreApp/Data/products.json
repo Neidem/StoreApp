@@ -1,0 +1,16 @@
+[
+  {
+    "Id": 1,
+    "Name": "Телефон Samsung A30",
+    "Price": 12500.0,
+    "Stock": 5,
+    "Category": "Электроника"
+  },
+  {
+    "Id": 2,
+    "Name": "Наушники JBL",
+    "Price": 4500.0,
+    "Stock": 10,
+    "Category": "Аудио"
+  }
+]
