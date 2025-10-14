@@ -11,6 +11,14 @@ namespace StoreApp.Models
         public string Username { get; set; }
         public string PasswordHash { get; set; }  // не сам пароль, а его хэш
         public string Role { get; set; }          // "admin" или "customer"
+
+
+        public virtual void ShowMenu()
+        {
+            Console.WriteLine("Базовое меню (по умолчанию)");
+        }
+
+
     }
 }
 

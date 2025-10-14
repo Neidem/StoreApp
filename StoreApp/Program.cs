@@ -1,96 +1,108 @@
 ﻿using StoreApp.Services;
+using StoreApp.Data;
 using StoreApp.Models;
 
-class Program
+
+namespace StoreApp
 {
-    static void Main()
+    class Program
     {
-        var auth = new AuthService();
-        UserAccount user = null;
-
-        while (true)
+        
+        static void Main(string[] args)
         {
-            Console.Clear();
-            int selected = MenuSelect(new[] { "Вход", "Выход" });
+            UserAccount user = null;
 
-            if (selected == 0)
+            Logger.Info("Приложение запущено");
+
+            // --- Меню навигации стрелками ---
+            static int MenuSelect(string[] options)
             {
-                user = auth.Login();
-                if (user != null)
+                int index = 0;
+                ConsoleKey key;
+
+                do
                 {
-                    if (user.Role == "admin")
-                        AdminMenu(auth);
-                    else if (user.Role == "customer")
-                        CustomerMenu();
-                }
+                    Console.Clear();
+                    Console.WriteLine("Используйте ↑ ↓ и Enter для выбора:\n");
+
+                    for (int i = 0; i < options.Length; i++)
+                    {
+                        if (i == index)
+                        {
+                            Console.ForegroundColor = ConsoleColor.Yellow;
+                            Console.WriteLine($"> {options[i]}");
+                            Console.ResetColor();
+                        }
+                        else
+                        {
+                            Console.WriteLine($"  {options[i]}");
+                        }
+                    }
+
+                    key = Console.ReadKey(true).Key;
+
+                    if (key == ConsoleKey.UpArrow && index > 0) index--;
+                    else if (key == ConsoleKey.DownArrow && index < options.Length - 1) index++;
+
+                } while (key != ConsoleKey.Enter);
+
+                return index;
             }
-            else
+            var authService = new AuthService();
+
+            while (user == null)
             {
-                Console.WriteLine("Выход из программы...");
-                break;
-            }
-        }
-    }
+                int choice = MenuSelect(new[] { "Войти", "Зарегистрироваться", "Выход" });
 
-    
-
-    // --- Меню навигации стрелками ---
-    static int MenuSelect(string[] options)
-    {
-        int index = 0;
-        ConsoleKey key;
-
-        do
-        {
-            Console.Clear();
-            Console.WriteLine("Используйте ↑ ↓ и Enter для выбора:\n");
-
-            for (int i = 0; i < options.Length; i++)
-            {
-                if (i == index)
+                if (choice == 0) // Войти
                 {
-                    Console.ForegroundColor = ConsoleColor.Yellow;
-                    Console.WriteLine($"> {options[i]}");
-                    Console.ResetColor();
+                    Console.Clear();
+                    Console.Write("Логин: ");
+                    string username = Console.ReadLine();
+                    Console.Write("Пароль: ");
+                    string password = Console.ReadLine();
+
+                    user = authService.Authenticate(username, password);
+                    if (user != null)
+                    {
+                        Console.WriteLine($"Добро пожаловать, {user.Username}!");
+                        user.ShowMenu(); // Полиморфизм
+                        
+                    }
+                    else
+                    {
+                        Console.WriteLine("Неверный логин или пароль.");
+                        Console.ReadKey();
+                    }
                 }
-                else
+                else if (choice == 1) // Зарегистрироваться
                 {
-                    Console.WriteLine($"  {options[i]}");
+                    Console.Clear();
+                    authService.RegisterUser(); // реализуй регистрацию через AuthService
                 }
-            }
-
-            key = Console.ReadKey(true).Key;
-
-            if (key == ConsoleKey.UpArrow && index > 0) index--;
-            else if (key == ConsoleKey.DownArrow && index < options.Length - 1) index++;
-
-        } while (key != ConsoleKey.Enter);
-
-        return index;
-    }
-
-    
-    
-        static void AdminMenu(AuthService auth)
-        {
-            while (true)
-            {
-                Console.Clear();
-                int choice = MenuSelect(new[] { "Добавить пользователя", "Назад" });
-
-                if (choice == 0)
-                    auth.RegisterUser();
-                else
+                else // Выход
+                {
                     break;
+                }
             }
+
+            
+
+            //static void AdminMenu(AuthService auth)
+            //{
+            //    while (true)
+            //    {
+            //        Console.Clear();
+            //        int choice = MenuSelect(new[] { "Добавить пользователя", "Назад" });
+
+            //        if (choice == 0)
+            //            auth.RegisterUser();
+            //        else
+            //            break;
+            //    }
+            //}
+
+
         }
-
-   
-
-    static void CustomerMenu()
-    {
-        Console.Clear();
-        Console.WriteLine("Меню клиента (позже добавим покупки и возвраты)");
-        Console.ReadKey();
     }
 }

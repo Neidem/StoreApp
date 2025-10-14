@@ -1,6 +1,8 @@
-﻿using StoreApp.Data;
+﻿using System;
+using StoreApp;
 using StoreApp.Models;
-using System;
+using StoreApp.Data;
+using System.Linq;
 using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Text;
@@ -10,12 +12,19 @@ namespace StoreApp.Services
 {
     class AuthService
     {
-        private List<UserAccount> users;
 
-        public AuthService()
+        private List<UserAccount> users;
+        private string usersFilePath;
+
+        // Конструктор с аргументом
+        public AuthService(string usersFile)
         {
+            usersFilePath = usersFile;
             users = DataManager.LoadUsers();
         }
+
+        // Можно оставить пустой конструктор по умолчанию
+        public AuthService() : this("Data/users.json") { }
 
         public static string GetMd5Hash(string input)
         {
@@ -36,9 +45,9 @@ namespace StoreApp.Services
                 login = Console.ReadLine()?.Trim();
 
                 if (string.IsNullOrEmpty(login))
-                    Console.WriteLine("❌ Логин не может быть пустым!");
+                    Console.WriteLine(" Логин не может быть пустым!");
                 else if (users.Any(u => u.Username.Equals(login, StringComparison.OrdinalIgnoreCase)))
-                    Console.WriteLine("❌ Такой пользователь уже существует!");
+                    Console.WriteLine(" Такой пользователь уже существует!");
                 else
                     break;
 
@@ -51,7 +60,7 @@ namespace StoreApp.Services
                 password = Console.ReadLine();
 
                 if (string.IsNullOrEmpty(password) || password.Length < 4)
-                    Console.WriteLine("❌ Слишком короткий пароль!");
+                    Console.WriteLine(" Слишком короткий пароль!");
                 else
                     break;
 
@@ -66,13 +75,13 @@ namespace StoreApp.Services
                 if (role == "admin" || role == "customer")
                     break;
                 else
-                    Console.WriteLine("❌ Некорректная роль!");
+                    Console.WriteLine(" Некорректная роль!");
             } while (true);
 
             var newUser = new UserAccount
             {
                 Username = login,
-                PasswordHash = GetMd5Hash(password),
+                PasswordHash= GetMd5Hash(password),
                 Role = role
             };
 
@@ -81,33 +90,57 @@ namespace StoreApp.Services
             // ✅ Сохраняем в реальный путь
             var dataPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", "users.json");
             string json = JsonSerializer.Serialize(users, new JsonSerializerOptions { WriteIndented = true });
+
+           // Console.WriteLine($"DEBUG PATH: {Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", "users.json")}");
+            Console.ReadKey();
             File.WriteAllText(dataPath, json);
 
-            Console.WriteLine("✅ Пользователь успешно добавлен!");
+            Console.WriteLine(" Пользователь успешно добавлен!");
             Console.ReadKey();
         }
 
-
-
-        public UserAccount Login()
+        public UserAccount Authenticate(string username, string password)
         {
-            Console.Write("Логин: ");
-            string login = Console.ReadLine();
-            Console.Write("Пароль: ");
-            string password = Console.ReadLine();
+            var user = users.FirstOrDefault(u => u.Username == username);
 
-            string hash = GetMd5Hash(password);
-
-            var user = users.Find(u => u.Username == login && u.PasswordHash == hash);
-
-            if (user != null)
+            if (user != null && user.PasswordHash == GetMd5Hash(password))
             {
-                Console.WriteLine($" Успешный вход ({user.Role})");
-                return user;
+                if (user.Role == "admin")
+                    return new Admin { Username = user.Username, Role = user.Role };
+                else
+                    return new Customer { Username = user.Username, Role = user.Role };
             }
 
-            Console.WriteLine("❌ Неверный логин или пароль");
             return null;
         }
+
+
+
+        //public UserAccount Login()
+        //{
+        //    Console.Write("Логин: ");
+        //    string login = Console.ReadLine();
+        //    Console.Write("Пароль: ");
+        //    string password = Console.ReadLine();
+
+        //    string hash = GetMd5Hash(password);
+
+        //    var user = users.Find(u => u.Username == login && u.PasswordHash == hash);
+
+        //    if (user != null)
+        //    {
+        //        Console.WriteLine($" Успешный вход ({user.Role})");
+        //        return user;
+        //    }
+
+        //    Console.WriteLine("❌ Неверный логин или пароль");
+        //    Logger.Warning("Пользователь не найден");
+        //    return null;
+        //}
+
+
+
+
+
     }
 }
