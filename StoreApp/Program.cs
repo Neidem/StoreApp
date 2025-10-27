@@ -5,12 +5,23 @@ using StoreApp.Models;
 
 namespace StoreApp
 {
+
+
+
     class Program
     {
-        
         static void Main(string[] args)
         {
+            IDataManager dataManager = DependencyContainer.GetDataManager();
+            IAuthService authService = DependencyContainer.GetAuthService();
+            IUserRegistrationService registrationService = DependencyContainer.GetRegistrationService();
+
+
+
             UserAccount user = null;
+            var dataPath = Path.Combine(Directory.GetParent(AppDomain.CurrentDomain.BaseDirectory).Parent.Parent.FullName,"Data","users.json");
+
+
 
             Logger.Info("Приложение запущено");
 
@@ -48,25 +59,30 @@ namespace StoreApp
 
                 return index;
             }
-            var authService = new AuthService();
+            //var authService = new AuthService();
 
-            while (user == null)
+           
+
+            while (true)
             {
-                int choice = MenuSelect(new[] { "Войти", "Зарегистрироваться", "Выход" });
+                int choice = MenuSelect(new[] { "Войти", "Зарегистрироваться", "Выход" });// 0 - Войти и т.д
 
                 if (choice == 0) // Войти
                 {
+                    
+
                     Console.Clear();
+                    Console.WriteLine($"📂 Используется файл: {dataPath}");
                     Console.Write("Логин: ");
                     string username = Console.ReadLine();
                     Console.Write("Пароль: ");
                     string password = Console.ReadLine();
-
-                    user = authService.Authenticate(username, password);
-                    if (user != null)
+                  //  user = authService.Authenticate(username, password);
+                     IUserMenu userMenu = authService.Authenticate(username, password);
+                    if (userMenu != null)
                     {
-                        Console.WriteLine($"Добро пожаловать, {user.Username}!");
-                        user.ShowMenu(); // Полиморфизм
+                        Console.WriteLine($"Добро пожаловать, {username}!");
+                        userMenu.ShowMenu(); // Полиморфизм
                         
                     }
                     else
@@ -78,7 +94,7 @@ namespace StoreApp
                 else if (choice == 1) // Зарегистрироваться
                 {
                     Console.Clear();
-                    authService.RegisterUser(); // реализуй регистрацию через AuthService
+                   registrationService.RegisterUser(); // реализуй регистрацию через AuthService
                 }
                 else // Выход
                 {

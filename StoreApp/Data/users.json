@@ -1,12 +1,52 @@
 [
   {
-    "Username": "admin",
-    "PasswordHash": "81dc9bdb52d04dc20036dbd8313ed055",
+    "Username": "hui",
+    "PasswordHash": "b59c67bf196a4758191e42f76670ceba",
     "Role": "admin"
   },
   {
-    "Username": "nikita",
-    "PasswordHash": "098f6bcd4621d373cade4e832627b4f6",
+    "Username": "hue",
+    "PasswordHash": "b59c67bf196a4758191e42f76670ceba",
+    "Role": "admin"
+  },
+  {
+    "Username": "chel",
+    "PasswordHash": "b59c67bf196a4758191e42f76670ceba",
+    "Role": "customer"
+  },
+  {
+    "Username": "neidem",
+    "PasswordHash": "b59c67bf196a4758191e42f76670ceba",
+    "Role": "admin"
+  },
+  {
+    "Username": "admin",
+    "PasswordHash": "b59c67bf196a4758191e42f76670ceba",
+    "Role": "customer"
+  },
+  {
+    "Username": "hues",
+    "PasswordHash": "b59c67bf196a4758191e42f76670ceba",
+    "Role": "admin"
+  },
+  {
+    "Username": "chlen",
+    "PasswordHash": "b59c67bf196a4758191e42f76670ceba",
+    "Role": "admin"
+  },
+  {
+    "Username": "lol",
+    "PasswordHash": "b59c67bf196a4758191e42f76670ceba",
+    "Role": "admin"
+  },
+  {
+    "Username": "root",
+    "PasswordHash": "b59c67bf196a4758191e42f76670ceba",
+    "Role": "customer"
+  },
+  {
+    "Username": "roo",
+    "PasswordHash": "b59c67bf196a4758191e42f76670ceba",
     "Role": "customer"
   }
 ]

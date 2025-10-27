@@ -6,36 +6,43 @@ namespace StoreApp.Services
     public static class Logger
     {
         private static readonly string logFile = "log.txt";
+        private static Queue<string> _logs = new Queue<string>();
+        private static readonly int LogAreaHeight = 8;
 
         public static void Info(string message)
         {
-            Write("INFO", message);
+            string logMessage = $"[{DateTime.Now:HH:mm:ss}] {message}";
+
+            // Добавляем лог в очередь
+            _logs.Enqueue(logMessage);
+            if (_logs.Count > LogAreaHeight)
+                _logs.Dequeue();
+
+            // Перерисовываем лог-область
+            DrawLogArea();
         }
 
-        public static void Warning(string message)
+        private static void DrawLogArea()
         {
-            Write("WARN", message);
-        }
+            int windowHeight = Console.WindowHeight;
+            int logStart = windowHeight - LogAreaHeight;
 
-        public static void Error(string message)
-        {
-            Write("ERROR", message);
-        }
-
-        private static void Write(string level, string message)
-        {
-            string log = $"[{DateTime.Now:HH:mm:ss}] [{level}] {message}";
-            Console.ForegroundColor = level switch
+            for (int i = 0; i < LogAreaHeight; i++)
             {
-                "INFO" => ConsoleColor.Gray,
-                "WARN" => ConsoleColor.Yellow,
-                "ERROR" => ConsoleColor.Red,
-                _ => ConsoleColor.White
-            };
-            Console.WriteLine(log);
-            Console.ResetColor();
+                Console.SetCursorPosition(0, logStart + i);
+                Console.Write(new string(' ', Console.WindowWidth)); // очищаем строку
+            }
 
-            File.AppendAllText(logFile, log + Environment.NewLine);
+            int row = 0;
+            foreach (var log in _logs)
+            {
+                Console.SetCursorPosition(0, logStart + row);
+                Console.Write(log);
+                row++;
+            }
+
+            // Возврат курсора в верх UI
+            Console.SetCursorPosition(0, 0);
         }
     }
 }

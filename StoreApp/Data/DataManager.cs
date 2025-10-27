@@ -9,6 +9,7 @@ using System.Text.Json;
 
 namespace StoreApp.Data
 {
+
     class DataManager
     {
         private const string UsersFile = "Data/users.json";
@@ -17,7 +18,6 @@ namespace StoreApp.Data
         {
             if (!File.Exists(UsersFile))
             {
-                Logger.Warning($"Файл {UsersFile} не найден. Создан новый пустой список пользователей.");
                 return new List<UserAccount>();
             }
 
@@ -31,7 +31,6 @@ namespace StoreApp.Data
             }
             catch (Exception ex)
             {
-                Logger.Error($"Ошибка при чтении {UsersFile}: {ex.Message}");
                 return new List<UserAccount>();
             }
         }
@@ -46,7 +45,6 @@ namespace StoreApp.Data
             }
             catch (Exception ex)
             {
-                Logger.Error($"Ошибка при сохранении {UsersFile}: {ex.Message}");
             }
         }
     }

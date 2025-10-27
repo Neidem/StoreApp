@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace StoreApp.Models
 {
-    class UserAccount
+   public  class UserAccount : IUserMenu
     {
         public string Username { get; set; }
         public string PasswordHash { get; set; }  // не сам пароль, а его хэш
