@@ -15,12 +15,15 @@ namespace StoreApp.Data
         private readonly string productsFile;
         private readonly string _usersFile;
         private readonly string ordersFile;
+        private readonly string _categoriesFile;
+
         public JsonDataManager()
         {
             // Константный путь относительно BaseDirectory
             _usersFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", "users.json");
             productsFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", "products.json");
-
+            _categoriesFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", "categories.json");
+            ordersFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", "orders.json");
             // Убедимся, что папка Data существует
             Directory.CreateDirectory(Path.GetDirectoryName(_usersFile)!);
         }
@@ -40,6 +43,16 @@ namespace StoreApp.Data
             File.WriteAllText(_usersFile, json);
         }
 
+        public List<Category> LoadCategories()
+        {
+            if (!File.Exists(_categoriesFile)) 
+                return new List<Category>();
+            string json = File.ReadAllText(_categoriesFile);
+            return JsonSerializer.Deserialize<List<Category>>(json);
+
+
+        }
+
         public List<Product> LoadProducts()
         {
             if(!File.Exists(productsFile)) 
@@ -48,8 +61,6 @@ namespace StoreApp.Data
             string json = File.ReadAllText(productsFile);
             return JsonSerializer.Deserialize<List<Product>>(json) 
                 ?? new List<Product>();
-
-            
         
         }
 

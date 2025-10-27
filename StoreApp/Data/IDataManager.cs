@@ -15,9 +15,12 @@ namespace StoreApp.Data
 
         List<Product> LoadProducts();
         void SaveProducts(List<Product> products);
+        List<Category> LoadCategories();
 
         List<Order> LoadOrders();
         void SaveOrders(List<Order> orders);
+
+
 
     }
 }

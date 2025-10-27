@@ -1,20 +1,23 @@
 [
-    {
-    "Id": 1,
-    "Name": "Ноутбук ACER 7710G",
+  {
+    "Id": 101,
+    "Name": "Asus ZenBook",
+    "Price": 70000,
+    "Quantity": 10,
+    "CategoryId": 1
+  },
+  {
+    "Id": 102,
+    "Name": "Dell Inspiron",
     "Price": 65000,
-    "Quantity": 5
+    "Quantity": 5,
+    "CategoryId": 1
   },
   {
-    "Id": 2,
-    "Name": "Смартфон Samsung A30",
-    "Price": 12500,
-    "Quantity": 10
-  },
-  {
-    "Id": 3,
-    "Name": "Мышка DEXP 2280",
-    "Price": 1500,
-    "Quantity": 25
+    "Id": 201,
+    "Name": "Samsung Monitor 24\"",
+    "Price": 12000,
+    "Quantity": 7,
+    "CategoryId": 2
   }
 ]

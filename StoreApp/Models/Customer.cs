@@ -28,17 +28,21 @@ namespace StoreApp.Models
             {
                 int choice = UIHelper.MenuSelect(new[]
                 {
-                    "Просмотреть товары", // choice = 0
-                    "Добавить в корзину",
-                    "Оформить заказ",
+                    "Категория товаров", // choice = 0
+                    "Моя Корзина",
+                    "Мои Заказы",
                     "Выйти"
-                }, "Меню покупателя");
+                }, $"Добро пожаловать,{Username}");
 
                 switch (choice)
                 {
                     case 0:
-                        _storeService.ShowProducts();
-                      //  Console.WriteLine("Товары пока не добавлены");
+                       // _storeService.ShowCategories();
+                        Console.Write("Выберите категорию по Id: ");
+                        
+                        int catId = int.Parse(Console.ReadLine());
+                        _storeService.ShowProductsByCategory(catId);
+                        //  Console.WriteLine("Товары пока не добавлены");
                         Console.ReadKey();
                         break;
                     case 1:

@@ -7,7 +7,6 @@ namespace StoreApp
 {
 
 
-
     class Program
     {
         static void Main(string[] args)
@@ -20,6 +19,13 @@ namespace StoreApp
 
             UserAccount user = null;
             var dataPath = Path.Combine(Directory.GetParent(AppDomain.CurrentDomain.BaseDirectory).Parent.Parent.FullName,"Data","users.json");
+            string dataDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data");
+            if (!Directory.Exists(dataDir))
+                Directory.CreateDirectory(dataDir);
+
+            string path = Path.Combine(dataDir, "products.json");
+            if (!File.Exists(path))
+                File.WriteAllText(path, "[]"); // создаем пустой JSON, если нет
 
 
 

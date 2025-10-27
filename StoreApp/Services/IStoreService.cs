@@ -10,7 +10,8 @@ namespace StoreApp.Services
     public interface IStoreService
     {
         List<Product> GetAllProducts();
-        void ShowProducts();
+        void ShowCategories();
+        void ShowProductsByCategory(int catId);
         void AddProduct(Product product);
 
     }
