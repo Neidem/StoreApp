@@ -1,5 +1,4 @@
 ﻿using StoreApp.Models;
-using StoreApp.Data;
 using System;
 using System.Collections.Generic;
 using System.Security.Cryptography;
@@ -7,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using StoreApp.Interface;
 
 namespace StoreApp.Services
 {

@@ -1,5 +1,5 @@
 ﻿using StoreApp.Helpers;
-using StoreApp.Services;
+using StoreApp.Interface;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,6 +14,7 @@ namespace StoreApp.Models
   public  class Customer : UserAccount,IUserMenu
     {
         private readonly IStoreService _storeService;
+        private readonly ICartService _cartService;
         public Customer()
         {
             _storeService = DependencyContainer.GetStoreService();
@@ -21,7 +22,7 @@ namespace StoreApp.Models
 
         public override void ShowMenu()
         {
-           
+           IOrderService orderService = DependencyContainer.GetOrderService();  
             
 
             while (true)
@@ -37,20 +38,24 @@ namespace StoreApp.Models
                 switch (choice)
                 {
                     case 0:
-                       // _storeService.ShowCategories();
-                        Console.Write("Выберите категорию по Id: ");
+                       // Console.Write("Выберите категорию по Id: ");
+                        _storeService.ShowCategories(this);
                         
-                        int catId = int.Parse(Console.ReadLine());
-                        _storeService.ShowProductsByCategory(catId);
+                        
+                       // int catId = int.Parse(Console.ReadLine());
+                        //_storeService.ShowProductsByCategory(catId);
                         //  Console.WriteLine("Товары пока не добавлены");
                         Console.ReadKey();
                         break;
                     case 1:
-                        Console.WriteLine("Корзина в разработке");
+                        //Console.WriteLine("Корзина в разработке");
+                        _cartService.ShowCart();
+
                         Console.ReadKey();
                         break;
                     case 2:
-                        Console.WriteLine("Оформление заказа (будет позже)");
+                        //Console.WriteLine("Оформление заказа (будет позже)");
+                        
                         Console.ReadKey();
                         break;
                     case 3:

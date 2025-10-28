@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using StoreApp.Models;
 using System.Text.Json;
 using System.Data;
+using StoreApp.Services;
+using StoreApp.Interface;
 
 
 namespace StoreApp.Data
@@ -79,7 +81,7 @@ namespace StoreApp.Data
         
         }
 
-        public void SaveOrders(List<Order> orders)
+        public void SaveOrder(List<Order> orders)
         {
             string json = JsonSerializer.Serialize(orders, new JsonSerializerOptions { WriteIndented = true });
             File.WriteAllText(ordersFile, json);

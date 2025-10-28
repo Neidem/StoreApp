@@ -4,9 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using StoreApp.Models;
+using StoreApp.Services;
 
 
-namespace StoreApp.Data
+namespace StoreApp.Interface
 {
     public interface IDataManager
     {
@@ -18,7 +19,7 @@ namespace StoreApp.Data
         List<Category> LoadCategories();
 
         List<Order> LoadOrders();
-        void SaveOrders(List<Order> orders);
+        void SaveOrder(List<Order> orders);
 
 
 

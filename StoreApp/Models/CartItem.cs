@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace StoreApp.Models
 {
-    public interface IUserMenu
+    public class CartItem
     {
-        void ShowMenu();
-
+        public int ProductId { get; set; }
+        public int Quantity { get; set; }   
     }
 }

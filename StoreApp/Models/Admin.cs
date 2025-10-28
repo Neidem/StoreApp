@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using StoreApp.Helpers;
+using StoreApp.Interface;
 
 namespace StoreApp.Models
 {
@@ -20,7 +21,7 @@ namespace StoreApp.Models
                     "Удалить:",
                     "Просмотреть список заказов",
                     "Выйти"
-                }, "Меню администратора");
+                }, $"Меню администратора {Username}");
 
                 switch (choice)
                 {

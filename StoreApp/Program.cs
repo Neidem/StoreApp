@@ -1,6 +1,8 @@
 ﻿using StoreApp.Services;
-using StoreApp.Data;
 using StoreApp.Models;
+using StoreApp.Enums;
+using System.Security;
+using StoreApp.Interface;
 
 
 namespace StoreApp
@@ -9,12 +11,17 @@ namespace StoreApp
 
     class Program
     {
+        
+        
+
         static void Main(string[] args)
         {
+            AppState currentState = AppState.MainMenu;
+
             IDataManager dataManager = DependencyContainer.GetDataManager();
             IAuthService authService = DependencyContainer.GetAuthService();
             IUserRegistrationService registrationService = DependencyContainer.GetRegistrationService();
-
+            IStoreService storeService = DependencyContainer.GetStoreService();
 
 
             UserAccount user = null;
@@ -27,7 +34,7 @@ namespace StoreApp
             if (!File.Exists(path))
                 File.WriteAllText(path, "[]"); // создаем пустой JSON, если нет
 
-
+           
 
             Logger.Info("Приложение запущено");
 

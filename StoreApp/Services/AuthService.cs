@@ -1,12 +1,7 @@
-﻿using System;
-using StoreApp;
+﻿using StoreApp.Interface;
 using StoreApp.Models;
-using StoreApp.Data;
-using System.Linq;
-using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Text;
-using System.Text.Json;
 
 namespace StoreApp.Services
 {
@@ -16,7 +11,7 @@ namespace StoreApp.Services
         private readonly List<UserAccount> _users;
 
 
-       // private readonly List<UserAccount> users;
+        // private readonly List<UserAccount> users;
         private string usersFilePath;
 
         // Конструктор с аргументом
@@ -28,7 +23,7 @@ namespace StoreApp.Services
 
         public AuthService(IDataManager dataManager)
         {
-          //  Logger.Info("аутентификация");
+            //  Logger.Info("аутентификация");
             _dataManager = dataManager;
             _users = _dataManager.LoadUsers();
         }

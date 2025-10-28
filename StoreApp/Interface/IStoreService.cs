@@ -5,13 +5,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace StoreApp.Services
+namespace StoreApp.Interface
 {
     public interface IStoreService
     {
         List<Product> GetAllProducts();
-        void ShowCategories();
-        void ShowProductsByCategory(int catId);
+        void ShowCategories(UserAccount user);
+        void ShowProductsByCategory(int catId, UserAccount user);
         void AddProduct(Product product);
 
     }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using StoreApp.Interface;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,7 +12,7 @@ namespace StoreApp.Models
         public string Username { get; set; }
         public string PasswordHash { get; set; }  // не сам пароль, а его хэш
         public string Role { get; set; }          // "admin" или "customer"
-
+        public List<CartItem> Cart { get; set; } = new List<CartItem>();
 
         public virtual void ShowMenu()
         {

@@ -1,8 +1,10 @@
-﻿using StoreApp.Data;
+﻿using StoreApp.Helpers;
+using StoreApp.Interface;
 using StoreApp.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -11,25 +13,47 @@ namespace StoreApp.Services
     class StoreService : IStoreService
     {
         private readonly IDataManager _dataManager;
+        private readonly ICartService _cartService;
+        private readonly IOrderService _orderService;
+
         private List<Category> _categories;
         private List<Product> _products;
         public List<Product> GetAllProducts() => _products;
         public List<Product> Products { get; set; } = new List<Product>();
 
-        public StoreService(IDataManager dataManager)
+        public StoreService(IDataManager dataManager, ICartService cartService)
         {
             _dataManager = dataManager;
-            _products = dataManager.LoadProducts();
-            _categories = dataManager.LoadCategories();
+           _cartService = cartService;
+            
+            _products = _dataManager.LoadProducts();
+            _categories = _dataManager.LoadCategories();
         }
 
-        public void ShowCategories()
+        public void ShowCategories(UserAccount user)
         {
+            while (true)
+            {
+                var categoryOptions = _categories
+                    .Select(c => $"{c.Id}:{c.Name}")
+                    .Append("Назад")
+                    .ToArray();
+
+                int choice = UIHelper.MenuSelect(categoryOptions);
+
+                if (choice == categoryOptions.Length - 1)
+                {
+                    break;
+                }
+
+                // Console.WriteLine("Категория товаров:");
+                var selectedCategory = _categories.ElementAt(choice);
+                ShowProductsByCategory(selectedCategory.Id, user);
+            }
+            //foreach (var p  in _categories)
+            //Console.WriteLine($"{p.Id}:{p.Name}");
 
 
-            Console.WriteLine("Категория товаров:");
-            foreach (var p in _categories)
-                Console.WriteLine($"{p.Id}:{p.Name}");
         }
 
         public void AddProduct(Product product)
@@ -38,22 +62,65 @@ namespace StoreApp.Services
             _dataManager.SaveProducts(_products);
         }
 
-        public void ShowProductsByCategory(int categoryId)
+        public void ShowProductsByCategory(int categoryId, UserAccount user)
         {
             var products = _products.Where(p => p.CategoryId == categoryId).ToList();
-                if(!products.Any())
-                {
+
+            if (!products.Any())
+            {
                 Console.WriteLine("Нет товаров в этой категории");
                 return;
-                }
-                Console.WriteLine($"Товары категории: {_categories.First(c => c.Id == categoryId).Name}");
-
-            foreach (var p in products)
-            {
-                Console.WriteLine($"{p.Id}:{p.Name} - {p.Price}руб (Остаток {p.Quantity})");
             }
-               
 
+            Console.WriteLine($"Товары категории: {_categories.First(c => c.Id == categoryId).Name}");
+            var countProduct = products
+                .Select(p => $"{p.Id}:{p.Name} - {p.Price}руб (Остаток {p.Quantity})")
+                .Append("Назад")
+                .ToArray();
+            int choice = UIHelper.MenuSelect(countProduct);
+
+            if (choice == countProduct.Length - 1)
+            {
+                ShowCategories(user);
+                return;
+            }
+
+            var selectedProduct = products[choice];
+
+            ShowProductsActions(selectedProduct, user);
+            //foreach (var p in products)
+            //{
+            //    Console.WriteLine($"{p.Id}:{p.Name} - {p.Price}руб (Остаток {p.Quantity})");
+            //}
+
+
+        }
+
+        public void ShowProductsActions(Product product, UserAccount user)
+        {
+            while (true)
+            {
+                int action = UIHelper.MenuSelect(new[]
+                {
+                    $"Добавить \"{product.Name}\" в корзину",
+                    $"Купить сейчас ({product.Price} руб)",
+                    "Назад"
+                }, $"Товар: {product.Name}");
+
+                switch (action)
+                {
+                    case 0:
+                        _cartService.AddToCart(user, product.Id, 1);
+                        break;
+                    case 1:
+                        break;
+
+                }
+
+
+
+
+            }
         }
     }
 

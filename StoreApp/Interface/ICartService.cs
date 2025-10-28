@@ -5,11 +5,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace StoreApp.Services
+namespace StoreApp.Interface
 {
-    public interface IAuthService
+    public interface ICartService
     {
-        IUserMenu Authenticate(string username, string password);
+        void AddToCart(UserAccount user, int productId, int quantity);
+        void ShowCart();
 
     }
 }
