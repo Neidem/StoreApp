@@ -9,11 +9,8 @@ namespace StoreApp
 {
 
 
-    class Program
+   sealed class Program
     {
-        
-        
-
         static void Main(string[] args)
         {
             AppState currentState = AppState.MainMenu;

@@ -18,8 +18,7 @@ namespace StoreApp
         public static IOrderService GetOrderService() =>
             new OrderService(GetDataManager());
         public static IStoreService GetStoreService() =>
-            new StoreService(GetDataManager(), GetCartService());
-        
+            new StoreService(GetDataManager(), GetCartService(),GetOrderService());
         
 
     }

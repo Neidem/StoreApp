@@ -12,7 +12,7 @@ namespace StoreApp.Interface
         //void AddToCart(UserAccount user, int productId, int quantity);
         //void RemoveFromCart(UserAccount user, int productId);
         //void ViewCart(UserAccount user);
-        void PlaceOrder(string username, int productId, int quantity);
+         Task PlaceOrder(UserAccount user, int productId, int quantity);
 
     }
 }

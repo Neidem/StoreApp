@@ -81,7 +81,7 @@ namespace StoreApp.Data
         
         }
 
-        public void SaveOrder(List<Order> orders)
+        public void SaveOrders(List<Order> orders)
         {
             string json = JsonSerializer.Serialize(orders, new JsonSerializerOptions { WriteIndented = true });
             File.WriteAllText(ordersFile, json);

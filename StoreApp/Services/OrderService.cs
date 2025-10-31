@@ -64,12 +64,49 @@ namespace StoreApp.Services
 
         //}
 
-        public void PlaceOrder(string username, int productId, int quantity)
+        public async Task PlaceOrder(UserAccount user, int productId, int quantity)
         {
-            var order = new Order { Username = username, ProductId = productId, Quantity = quantity, Date = DateTime.Now };
-           // _dataManager.SaveOrder(order);
-        }
+            var products = _dataManager.LoadProducts();
+            var product = products.FirstOrDefault(p => p.Id == productId);
 
+            if (product == null)
+            {
+                Console.WriteLine("❌ Товар не найден.");
+                return;
+            }
+
+            if (product.Quantity < quantity)
+            {
+                Console.WriteLine("Нет товара!");
+                return;
+            }
+
+            await Task.Run(() =>
+                {
+
+                    var orders = _dataManager.LoadOrders();
+                    // создаём заказ
+                    var order = new Order
+                    {
+                        Username = user.Username,
+                        ProductId = productId,
+                        Quantity = quantity,
+                        Date = DateTime.Now,
+                        TotalPrice = product.Price * quantity
+                    };
+
+
+                    // сохраняем заказ в user (локально)
+
+                    
+                    orders.Add(order);
+                    _dataManager.SaveOrders(orders);
+
+                    product.Quantity -= quantity;
+                    _dataManager.SaveProducts(products);
+                });
+        
+        }
 
     }
 

@@ -18,6 +18,7 @@ namespace StoreApp.Models
         public Customer()
         {
             _storeService = DependencyContainer.GetStoreService();
+            _cartService = DependencyContainer.GetCartService();
         }
 
         public override void ShowMenu()

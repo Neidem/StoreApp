@@ -1,12 +1,6 @@
 ﻿using StoreApp.Helpers;
 using StoreApp.Interface;
 using StoreApp.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace StoreApp.Services
 {
@@ -21,11 +15,12 @@ namespace StoreApp.Services
         public List<Product> GetAllProducts() => _products;
         public List<Product> Products { get; set; } = new List<Product>();
 
-        public StoreService(IDataManager dataManager, ICartService cartService)
+        public StoreService(IDataManager dataManager, ICartService cartService, IOrderService orderService)
         {
             _dataManager = dataManager;
-           _cartService = cartService;
-            
+            _cartService = cartService;
+            _orderService = orderService;
+
             _products = _dataManager.LoadProducts();
             _categories = _dataManager.LoadCategories();
         }
@@ -111,9 +106,16 @@ namespace StoreApp.Services
                 {
                     case 0:
                         _cartService.AddToCart(user, product.Id, 1);
-                        break;
+                        Console.WriteLine("\n Нажмите любую кнопку, чтобы вернуться...");
+                        Console.ReadKey(true);
+                        return;
                     case 1:
+                        _orderService.PlaceOrder(user, product.Id, 1);
+                        Console.WriteLine("Заказ оформлен");
+                        Console.ReadKey(true);
                         break;
+                    case 2:
+                        return;
 
                 }
 

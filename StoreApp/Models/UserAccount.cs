@@ -14,6 +14,8 @@ namespace StoreApp.Models
         public string Role { get; set; }          // "admin" или "customer"
         public List<CartItem> Cart { get; set; } = new List<CartItem>();
 
+        public List<Order> Orders { get; set; } = new();   
+
         public virtual void ShowMenu()
         {
             Console.WriteLine("Базовое меню (по умолчанию)");

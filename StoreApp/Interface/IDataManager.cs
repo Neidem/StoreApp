@@ -19,7 +19,7 @@ namespace StoreApp.Interface
         List<Category> LoadCategories();
 
         List<Order> LoadOrders();
-        void SaveOrder(List<Order> orders);
+        void SaveOrders(List<Order> orders);
 
 
 
