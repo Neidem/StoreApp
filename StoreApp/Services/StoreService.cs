@@ -25,7 +25,7 @@ namespace StoreApp.Services
             _categories = _dataManager.LoadCategories();
         }
 
-        public void ShowCategories(UserAccount user)
+        public bool ShowCategories(UserAccount user)
         {
             while (true)
             {
@@ -38,7 +38,7 @@ namespace StoreApp.Services
 
                 if (choice == categoryOptions.Length - 1)
                 {
-                    break;
+                    return false;
                 }
 
                 // Console.WriteLine("Категория товаров:");
@@ -57,41 +57,44 @@ namespace StoreApp.Services
             _dataManager.SaveProducts(_products);
         }
 
-        public void ShowProductsByCategory(int categoryId, UserAccount user)
+        public bool ShowProductsByCategory(int categoryId, UserAccount user)
         {
             var products = _products.Where(p => p.CategoryId == categoryId).ToList();
 
             if (!products.Any())
             {
                 Console.WriteLine("Нет товаров в этой категории");
-                return;
+                return true;
             }
-            Console.Clear();
-            Console.WriteLine($"Товары категории: {_categories.First(c => c.Id == categoryId).Name}");
-            var countProduct = products
-                .Select(p => $"{p.Id}:{p.Name} - {p.Price}руб (Остаток {p.Quantity})")
-                .Append("Назад")
-                .ToArray();
-            int choice = UIHelper.MenuSelect(countProduct);
-
-            if (choice == countProduct.Length - 1)
+            while (true)
             {
-                ShowCategories(user);
-                return;
+                Console.Clear();
+                Console.WriteLine($"Товары категории: {_categories.First(c => c.Id == categoryId).Name}");
+                var countProduct = products
+                    .Select(p => $"{p.Id}:{p.Name} - {p.Price}руб (Остаток {p.Quantity})")
+                    .Append("Назад")
+                    .ToArray();
+                int choice = UIHelper.MenuSelect(countProduct);
+
+                if (choice == countProduct.Length - 1)
+                {
+                    return true;
+                }
+
+                var selectedProduct = products[choice];
+
+                if (!ShowProductsActions(selectedProduct, user))
+                    return false;
+                // ShowProductsActions(selectedProduct, user);
+
+
             }
 
-            var selectedProduct = products[choice];
-
-            ShowProductsActions(selectedProduct, user);
-            //foreach (var p in products)
-            //{
-            //    Console.WriteLine($"{p.Id}:{p.Name} - {p.Price}руб (Остаток {p.Quantity})");
-            //}
 
 
         }
 
-        public void ShowProductsActions(Product product, UserAccount user)
+        public bool ShowProductsActions(Product product, UserAccount user)
         {
             while (true)
             {
@@ -107,21 +110,26 @@ namespace StoreApp.Services
                 {
                     case 0:
                         _cartService.AddToCart(user, product.Id, 1);
-                        Console.ReadKey(true);
-                        return;
+                        Console.Clear();
+                      ShowCategories(user);
+                        break;
+
                     case 1:
                         _orderService.PlaceOrder(user, product.Id, 1);
+
                         Console.WriteLine("Заказ оформлен");
                         Console.ReadKey(true);
+                        Console.Clear();
+                        
+                        ShowCategories(user);
                         break;
                     case 2:
                         Console.Clear();
-                        return;
-
+                        return true;
                 }
 
-
-
+                // пользователь нажал “Назад”
+               
 
             }
         }

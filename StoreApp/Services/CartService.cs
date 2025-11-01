@@ -29,6 +29,13 @@ namespace StoreApp.Services
                 return;
             }
 
+            if (product.Quantity < quantity)
+            {
+                Console.WriteLine("Нет товара на складе!");
+                Console.ReadKey();
+                return;
+            }
+
             var carts = _dataManager.LoadCarts();
             if (!carts.ContainsKey(user.Username))
                 carts[user.Username] = new List<CartItem>();
@@ -38,6 +45,7 @@ namespace StoreApp.Services
             if (existing != null)
             {
                 existing.Quantity += quantity;
+                Console.WriteLine($" Количество {product.Name} обновлено: теперь {existing.Quantity} шт.");
             }
             else
             {
@@ -55,6 +63,7 @@ namespace StoreApp.Services
 
         public void ShowCart(UserAccount user)
         {
+            Console.Clear();
             var carts = _dataManager.LoadCarts();
             if (!carts.ContainsKey(user.Username) || carts[user.Username].Count == 0)
             {
@@ -107,7 +116,7 @@ namespace StoreApp.Services
         }
         public void ClearCart() => _cartItems.Clear();
 
-        public void ShowCartItemActions(UserAccount user, Product product)
+        public bool ShowCartItemActions(UserAccount user, Product product)
         {
             while (true)
             {
@@ -129,36 +138,49 @@ namespace StoreApp.Services
                         _orderService.PlaceOrder(user, product.Id, 1);
                         Console.WriteLine(" Заказ оформлен!");
                         Console.ReadKey(true);
-                        return;
+                        break;
                     case 1:
-                        RemoveFromCart(user, product.Id);
-                        Console.WriteLine(" Товар удалён из корзины!");
-                        Console.ReadKey(true);
-                        return;
+                        RemoveFromCart(user, product.Id,product.Name);
+                        Console.Clear();
+                        ShowCart(user);
+                        return true;
+                    case 2:
+                        return false;
 
                 }
 
             }
 
         }
-        public void RemoveFromCart(UserAccount user, int productId)
+        public void RemoveFromCart(UserAccount user, int productId, string name )
         {
             var carts = _dataManager.LoadCarts();
-            if (!carts.ContainsKey(user.Username)) return;
+            if (!carts.ContainsKey(user.Username)) 
+                return;
 
             var userCart = carts[user.Username];
             var item = userCart.FirstOrDefault(c => c.ProductId == productId);
-
-            if (item != null)
+            
+            if(item==null)
             {
-                userCart.Remove(item);
-                _dataManager.SaveCarts(carts); // сохраняем обновлённую корзину
-                Console.WriteLine(" Товар удалён из корзины.");
+                Console.WriteLine("Товар не найден в корзине");
+                return;
+
             }
+
+            if(item.Quantity>1)
+            {
+                item.Quantity--;
+                Console.WriteLine($"Убрали 1шт. Теперь {item.Quantity} шт");
+            }
+
             else
             {
-                Console.WriteLine("Товар не найден в корзине.");
+                userCart.Remove(item);
+                Console.WriteLine($" {name} удалён из корзины полностью.");
             }
+
+            _dataManager.SaveCarts(carts);
         }
 
     }

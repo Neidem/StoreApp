@@ -10,8 +10,8 @@ namespace StoreApp.Interface
     public interface IStoreService
     {
         List<Product> GetAllProducts();
-        void ShowCategories(UserAccount user);
-        void ShowProductsByCategory(int catId, UserAccount user);
+        bool ShowCategories(UserAccount user);
+       bool ShowProductsByCategory(int catId, UserAccount user);
         void AddProduct(Product product);
 
     }

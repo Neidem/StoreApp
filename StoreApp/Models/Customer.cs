@@ -63,7 +63,7 @@ namespace StoreApp.Models
                         Console.ReadKey();
                         break;
                     case 3:
-                        
+                        Console.Clear();
 
                         return; // выход из меню
                 }

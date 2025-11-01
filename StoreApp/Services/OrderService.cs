@@ -84,11 +84,12 @@ namespace StoreApp.Services
 
             await Task.Run(() =>
                 {
-
+                    // загружаем заказы пользователя
                     var orders = _dataManager.LoadOrders(user.Username);
                     // создаём заказ
                     var order = new Order
                     {
+                        Id = Guid.NewGuid().GetHashCode(),
                         Username = user.Username,
                         ProductId = productId,
                         Quantity = quantity,
@@ -102,16 +103,31 @@ namespace StoreApp.Services
 
                     orders.Add(order);
                     _dataManager.SaveOrders(user.Username, orders);
-
+                    // уменьшаем количество товара на складе
                     product.Quantity -= quantity;
                     _dataManager.SaveProducts(products);
+
+                    var carts = _dataManager.LoadCarts();
+                    if (carts.ContainsKey(user.Username))
+                    {
+                        var userCart = carts[user.Username];
+                        var itemToRemove = userCart.FirstOrDefault(c => c.ProductId == productId);
+                        if (itemToRemove != null)
+                        {
+                            userCart.Remove(itemToRemove);
+
+                        }
+                    }
+                    _dataManager.SaveCarts(carts);
+
                 });
+
 
         }
 
-        public void ViewOrders(UserAccount user)
+        public bool ViewOrders(UserAccount user)
         {
-
+            Console.Clear();
             var orders = LoadOrders(user.Username);
 
 
@@ -119,7 +135,7 @@ namespace StoreApp.Services
             if (!orders.Any())
             {
                 Console.WriteLine(" У вас нет заказов.");
-                return;
+                return true;
             }
             while (true)
             {
@@ -139,8 +155,8 @@ namespace StoreApp.Services
                     decimal subtotal = product.Price + product.Quantity;
                     menuItems.Add($"{product.Name} - {order.Quantity}шт {product.Price} руб = {subtotal} руб");
 
-                  //  Console.WriteLine($"{product?.Name ?? "Товар удалён"} — {order.Quantity} шт. — {order.TotalPrice:C} — {order.Date:g}");
-                     totalAllOrders += subtotal;
+                    //  Console.WriteLine($"{product?.Name ?? "Товар удалён"} — {order.Quantity} шт. — {order.TotalPrice:C} — {order.Date:g}");
+                    totalAllOrders += subtotal;
 
                 }
                 menuItems.Add("Back");
@@ -149,16 +165,21 @@ namespace StoreApp.Services
 
                 int choice = UIHelper.MenuSelect(menuItems.ToArray(), "Выберите действие");
 
-                if (choice == menuItems.Count - 1) break;
+                if (choice == menuItems.Count - 1) 
+                    return false;
 
                 var selectedOrder = orders[choice];
                 var selectedProduct = products.FirstOrDefault(p => p.Id == selectedOrder.ProductId);
-                if (selectedProduct == null) continue;
-                ShowOrderActions(user,selectedOrder,selectedProduct);
+                if (selectedProduct == null) 
+                    continue;
+
+                if(!ShowOrderActions(user, selectedOrder, selectedProduct))
+                    return false;
             }
+
         }
-    
-      
+
+
 
         public List<Order> LoadOrders(string username)
         {
@@ -166,9 +187,9 @@ namespace StoreApp.Services
 
         }
 
-        public void ShowOrderActions (UserAccount user, Order order, Product product)
+        public bool ShowOrderActions(UserAccount user, Order order, Product product)
         {
-            while(true)
+            while (true)
             {
                 Console.Clear();
                 Console.WriteLine($" Заказ: {product.Name}");
@@ -180,17 +201,20 @@ namespace StoreApp.Services
                     "Назад"
                 });
 
-                switch(choice)
+                switch (choice)
                 {
                     case 0:
-                        CancelOrder(user,order);
-                        Console.WriteLine("Заказ отменен");
+                        CancelOrder(user, order);
                         Console.ReadKey();
-                        return;
+                        ViewOrders(user);
+                        Console.Clear();
+                        break;
                     case 1:
-                        return;
+                        Console.Clear();
+                        ViewOrders(user);
+                        return false;
                 }
-                
+
             }
 
 
@@ -199,10 +223,13 @@ namespace StoreApp.Services
         public void CancelOrder(UserAccount user, Order order)
         {
             var orders = _dataManager.LoadOrders(user.Username);
-            if(orders.Contains(order))
+
+            var existing = orders.FirstOrDefault(o => o.Id == order.Id);
+            if (existing != null)
             {
-                orders.Remove(order);
+                orders.Remove(existing);
                 _dataManager.SaveOrders(user.Username, orders);
+                Console.WriteLine("заказ отменен");
             }
 
             else

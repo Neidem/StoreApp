@@ -13,9 +13,9 @@ namespace StoreApp.Interface
         //void RemoveFromCart(UserAccount user, int productId);
         //void ViewCart(UserAccount user);
          Task PlaceOrder(UserAccount user, int productId, int quantity);
-        void ViewOrders(UserAccount user);
+        bool ViewOrders(UserAccount user);
         List<Order> LoadOrders(string username);
-        void ShowOrderActions(UserAccount user, Order order, Product product);
+        bool ShowOrderActions(UserAccount user, Order order, Product product);
         void CancelOrder(UserAccount user, Order order);
     }
 }
