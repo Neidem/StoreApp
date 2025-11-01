@@ -66,7 +66,7 @@ namespace StoreApp.Services
                 Console.WriteLine("Нет товаров в этой категории");
                 return;
             }
-
+            Console.Clear();
             Console.WriteLine($"Товары категории: {_categories.First(c => c.Id == categoryId).Name}");
             var countProduct = products
                 .Select(p => $"{p.Id}:{p.Name} - {p.Price}руб (Остаток {p.Quantity})")
@@ -95,6 +95,7 @@ namespace StoreApp.Services
         {
             while (true)
             {
+                Console.Clear();
                 int action = UIHelper.MenuSelect(new[]
                 {
                     $"Добавить \"{product.Name}\" в корзину",
@@ -106,7 +107,6 @@ namespace StoreApp.Services
                 {
                     case 0:
                         _cartService.AddToCart(user, product.Id, 1);
-                        Console.WriteLine("\n Нажмите любую кнопку, чтобы вернуться...");
                         Console.ReadKey(true);
                         return;
                     case 1:
@@ -115,6 +115,7 @@ namespace StoreApp.Services
                         Console.ReadKey(true);
                         break;
                     case 2:
+                        Console.Clear();
                         return;
 
                 }

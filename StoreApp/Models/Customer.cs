@@ -15,19 +15,22 @@ namespace StoreApp.Models
     {
         private readonly IStoreService _storeService;
         private readonly ICartService _cartService;
+        private readonly IOrderService _orderService;
         public Customer()
         {
             _storeService = DependencyContainer.GetStoreService();
             _cartService = DependencyContainer.GetCartService();
+            _orderService = DependencyContainer.GetOrderService();  
         }
 
         public override void ShowMenu()
         {
-           IOrderService orderService = DependencyContainer.GetOrderService();  
+           
             
 
             while (true)
             {
+                
                 int choice = UIHelper.MenuSelect(new[]
                 {
                     "Категория товаров", // choice = 0
@@ -50,16 +53,18 @@ namespace StoreApp.Models
                         break;
                     case 1:
                         //Console.WriteLine("Корзина в разработке");
-                        _cartService.ShowCart();
+                        _cartService.ShowCart(this);
 
                         Console.ReadKey();
                         break;
                     case 2:
                         //Console.WriteLine("Оформление заказа (будет позже)");
-                        
+                        _orderService.ViewOrders(this);
                         Console.ReadKey();
                         break;
                     case 3:
+                        
+
                         return; // выход из меню
                 }
             }

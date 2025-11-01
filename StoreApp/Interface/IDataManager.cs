@@ -11,15 +11,25 @@ namespace StoreApp.Interface
 {
     public interface IDataManager
     {
+        // Пользователи
         List<UserAccount> LoadUsers();
         void SaveUsers(List<UserAccount> users);
-
+        //
+        // Продукция
+        //
         List<Product> LoadProducts();
         void SaveProducts(List<Product> products);
         List<Category> LoadCategories();
-
-        List<Order> LoadOrders();
-        void SaveOrders(List<Order> orders);
+       //
+       // Корзина
+       //
+        Dictionary<string, List<CartItem>> LoadCarts();
+        void SaveCarts(Dictionary<string, List<CartItem>> carts);
+        //
+        // Заказы
+        //
+        List<Order> LoadOrders(string username);
+        void SaveOrders(string username,List<Order> orders);
 
 
 

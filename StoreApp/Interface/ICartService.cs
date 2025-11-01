@@ -10,7 +10,7 @@ namespace StoreApp.Interface
     public interface ICartService
     {
         void AddToCart(UserAccount user, int productId, int quantity);
-        void ShowCart();
+        void ShowCart(UserAccount user);
 
     }
 }

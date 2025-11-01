@@ -1,4 +1,5 @@
-﻿using StoreApp.Interface;
+﻿using StoreApp.Helpers;
+using StoreApp.Interface;
 using StoreApp.Models;
 
 namespace StoreApp.Services
@@ -7,6 +8,7 @@ namespace StoreApp.Services
     {
         private readonly IDataManager _dataManager;
         private readonly IStoreService _storeService;
+
         private List<Order> _orders;
 
         public int Id { get; set; }
@@ -18,8 +20,7 @@ namespace StoreApp.Services
         public OrderService(IDataManager dataManager)
         {
             _dataManager = dataManager;
-           
-            _orders = _dataManager.LoadOrders();
+            //  _orders = _dataManager.LoadOrders();
         }
 
         //public void AddToCart(UserAccount user, int productId, int quantity)
@@ -84,7 +85,7 @@ namespace StoreApp.Services
             await Task.Run(() =>
                 {
 
-                    var orders = _dataManager.LoadOrders();
+                    var orders = _dataManager.LoadOrders(user.Username);
                     // создаём заказ
                     var order = new Order
                     {
@@ -98,14 +99,117 @@ namespace StoreApp.Services
 
                     // сохраняем заказ в user (локально)
 
-                    
+
                     orders.Add(order);
-                    _dataManager.SaveOrders(orders);
+                    _dataManager.SaveOrders(user.Username, orders);
 
                     product.Quantity -= quantity;
                     _dataManager.SaveProducts(products);
                 });
-        
+
+        }
+
+        public void ViewOrders(UserAccount user)
+        {
+
+            var orders = LoadOrders(user.Username);
+
+
+
+            if (!orders.Any())
+            {
+                Console.WriteLine(" У вас нет заказов.");
+                return;
+            }
+            while (true)
+            {
+                Console.Clear();
+                Console.WriteLine($"\n Ваши заказы: {user.Username}");
+
+
+                var products = _dataManager.LoadProducts();
+                var menuItems = new List<string>();
+                decimal totalAllOrders = 0;
+
+                foreach (var order in orders)
+                {
+                    var product = products.FirstOrDefault(p => p.Id == order.ProductId);
+                    if (product == null) continue;
+
+                    decimal subtotal = product.Price + product.Quantity;
+                    menuItems.Add($"{product.Name} - {order.Quantity}шт {product.Price} руб = {subtotal} руб");
+
+                  //  Console.WriteLine($"{product?.Name ?? "Товар удалён"} — {order.Quantity} шт. — {order.TotalPrice:C} — {order.Date:g}");
+                     totalAllOrders += subtotal;
+
+                }
+                menuItems.Add("Back");
+
+                Console.WriteLine($"Общая сумма всех заказов: {totalAllOrders} руб \n");
+
+                int choice = UIHelper.MenuSelect(menuItems.ToArray(), "Выберите действие");
+
+                if (choice == menuItems.Count - 1) break;
+
+                var selectedOrder = orders[choice];
+                var selectedProduct = products.FirstOrDefault(p => p.Id == selectedOrder.ProductId);
+                if (selectedProduct == null) continue;
+                ShowOrderActions(user,selectedOrder,selectedProduct);
+            }
+        }
+    
+      
+
+        public List<Order> LoadOrders(string username)
+        {
+            return _dataManager.LoadOrders(username);
+
+        }
+
+        public void ShowOrderActions (UserAccount user, Order order, Product product)
+        {
+            while(true)
+            {
+                Console.Clear();
+                Console.WriteLine($" Заказ: {product.Name}");
+                Console.WriteLine($"Цена: {product.Price} руб × {order.Quantity} = {product.Price * order.Quantity} руб\n");
+
+                int choice = UIHelper.MenuSelect(new[]
+                {
+                    "Отменить заказ",
+                    "Назад"
+                });
+
+                switch(choice)
+                {
+                    case 0:
+                        CancelOrder(user,order);
+                        Console.WriteLine("Заказ отменен");
+                        Console.ReadKey();
+                        return;
+                    case 1:
+                        return;
+                }
+                
+            }
+
+
+        }
+
+        public void CancelOrder(UserAccount user, Order order)
+        {
+            var orders = _dataManager.LoadOrders(user.Username);
+            if(orders.Contains(order))
+            {
+                orders.Remove(order);
+                _dataManager.SaveOrders(user.Username, orders);
+            }
+
+            else
+            {
+                Console.WriteLine("Заказ не найден");
+
+            }
         }
 
     }

@@ -1,23 +1,20 @@
-﻿using StoreApp.Data;
+﻿using StoreApp.Helpers;
 using StoreApp.Interface;
 using StoreApp.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace StoreApp.Services
 {
     public class CartService : ICartService
     {
         private readonly IDataManager _dataManager;
+        private readonly IOrderService _orderService;
+
         //private readonly IStoreService _storeService;
         private readonly List<Product> _cartItems = new();
 
-        public CartService(IDataManager dataManager)
+        public CartService(IDataManager dataManager, IOrderService orderService)
         {
-
+            _orderService = orderService;
             _dataManager = dataManager;
         }
 
@@ -32,37 +29,138 @@ namespace StoreApp.Services
                 return;
             }
 
-            var existing = user.Cart.FirstOrDefault(c=> c.ProductId == productId);  
+            var carts = _dataManager.LoadCarts();
+            if (!carts.ContainsKey(user.Username))
+                carts[user.Username] = new List<CartItem>();
+
+
+            var existing = carts[user.Username].FirstOrDefault(c => c.ProductId == productId);
             if (existing != null)
             {
                 existing.Quantity += quantity;
             }
             else
             {
-                user.Cart.Add(new CartItem { ProductId = productId, Quantity = quantity });
+                carts[user.Username].Add(new CartItem { ProductId = productId, Quantity = quantity });
+
 
                 Console.WriteLine($" {product.Name} добавлен в корзину ({quantity} шт).");
-                Console.WriteLine("Нажмите любую клавишу, чтобы продолжить...");
-                Console.ReadKey(true);
+
+
             }
+            _dataManager.SaveCarts(carts);
+            Console.ReadKey(true);
         }
 
 
-        public void ShowCart()
+        public void ShowCart(UserAccount user)
         {
-            if (_cartItems.Count == 0)
+            var carts = _dataManager.LoadCarts();
+            if (!carts.ContainsKey(user.Username) || carts[user.Username].Count == 0)
             {
                 Console.WriteLine("Корзина пуста");
                 return;
             }
 
-            Console.WriteLine("\n Товары в корзине");
-            foreach (var item in _cartItems) 
-                Console.WriteLine($"{item.Name} - {item.Price} руб");
+            while (true)
+            {
+                Console.Clear();    
+                Console.WriteLine("\n Товары в корзине:");
+                
+                var products = _dataManager.LoadProducts();
+                var cartItems = carts[user.Username];
+                decimal total = 0;
 
-            Console.WriteLine($"\n Итого: {_cartItems.Sum(p => p.Price)}");
+                var menuItems = new List<string>();
+                foreach (var item in cartItems)
+                {
+                    var product = products.FirstOrDefault(p => p.Id == item.ProductId);
+                    if (product == null) continue;
 
+                    decimal subtotal = product.Price * item.Quantity;
+                    menuItems.Add($"{product.Name} - {item.Quantity} шт {product.Price} рую = {subtotal} руб");
+                    total += subtotal;
+                }
+
+                menuItems.Add("Back");
+
+                Console.WriteLine($"\n Итого: {total}");
+
+                int choice = UIHelper.MenuSelect(menuItems.ToArray(),"Выберите товар для действия");
+
+
+                if (choice == menuItems.Count - 1)
+                    break;
+
+                var selectedItem = cartItems[choice];
+                var selectedProduct = products.FirstOrDefault(p=>p.Id == selectedItem.ProductId);
+                
+                if(selectedItem == null)
+                {
+                    Console.WriteLine("Ошибка:товар не найден в корзине");
+                    continue;
+                }
+
+                ShowCartItemActions(user, selectedProduct);
+
+            }
         }
         public void ClearCart() => _cartItems.Clear();
+
+        public void ShowCartItemActions(UserAccount user, Product product)
+        {
+            while (true)
+            {
+                Console.Clear();
+                Console.WriteLine($" {product.Name}");
+                Console.WriteLine($"Цена: {product.Price} руб");
+               
+
+                int choice = UIHelper.MenuSelect(new[]
+                {
+                    "Оформить заказ",
+                    "Удалить из корзины",
+                    "Назад"
+                });
+
+                switch (choice)
+                {
+                    case 0:
+                        _orderService.PlaceOrder(user, product.Id, 1);
+                        Console.WriteLine(" Заказ оформлен!");
+                        Console.ReadKey(true);
+                        return;
+                    case 1:
+                        RemoveFromCart(user, product.Id);
+                        Console.WriteLine(" Товар удалён из корзины!");
+                        Console.ReadKey(true);
+                        return;
+
+                }
+
+            }
+
+        }
+        public void RemoveFromCart(UserAccount user, int productId)
+        {
+            var carts = _dataManager.LoadCarts();
+            if (!carts.ContainsKey(user.Username)) return;
+
+            var userCart = carts[user.Username];
+            var item = userCart.FirstOrDefault(c => c.ProductId == productId);
+
+            if (item != null)
+            {
+                userCart.Remove(item);
+                _dataManager.SaveCarts(carts); // сохраняем обновлённую корзину
+                Console.WriteLine(" Товар удалён из корзины.");
+            }
+            else
+            {
+                Console.WriteLine("Товар не найден в корзине.");
+            }
+        }
+
     }
 }
+

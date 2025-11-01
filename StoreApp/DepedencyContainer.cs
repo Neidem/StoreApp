@@ -14,7 +14,7 @@ namespace StoreApp
         public static IUserRegistrationService GetRegistrationService() =>
             new UserRegistrationService(GetDataManager());
        public static ICartService GetCartService() =>
-            new CartService(GetDataManager()); 
+            new CartService(GetDataManager(), GetOrderService()); 
         public static IOrderService GetOrderService() =>
             new OrderService(GetDataManager());
         public static IStoreService GetStoreService() =>
