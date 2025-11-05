@@ -3,6 +3,7 @@ using StoreApp.Models;
 using StoreApp.Enums;
 using System.Security;
 using StoreApp.Interface;
+using StoreApp.Helpers;
 
 
 namespace StoreApp
@@ -11,7 +12,7 @@ namespace StoreApp
 
    sealed class Program
     {
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             AppState currentState = AppState.MainMenu;
 
@@ -75,36 +76,49 @@ namespace StoreApp
 
             while (true)
             {
-                int choice = MenuSelect(new[] { "Войти", "Зарегистрироваться", "Выход" });// 0 - Войти и т.д
+                int choice = UIHelper.MenuSelect(new[] 
+                { 
+                    "Войти",
+                    "Зарегистрироваться",
+                    "Выход" 
+                }, "Магазинчик");// 0 - Войти и т.д
 
                 if (choice == 0) // Войти
                 {
-                    
-
                     Console.Clear();
                     Console.WriteLine($"📂 Используется файл: {dataPath}");
                     Console.Write("Логин: ");
                     string username = Console.ReadLine();
                     Console.Write("Пароль: ");
                     string password = Console.ReadLine();
-                  //  user = authService.Authenticate(username, password);
-                     IUserMenu userMenu = authService.Authenticate(username, password);
-                    if (userMenu != null)
+                    //  user = authService.Authenticate(username, password);
+
+                    var result = authService.AuthenticateUser(username, password);
+                    if (!result.Succes)
                     {
-                        Console.WriteLine($"Добро пожаловать, {username}!");
-                        userMenu.ShowMenu(); // Полиморфизм
-                        
-                    }
-                    else
-                    {
-                        Console.WriteLine("Неверный логин или пароль.");
+                        if (result.IsBanned)
+                            Console.WriteLine("Пользователь был заблокирован администратором!");
+                        else
+                            Console.WriteLine("Неверный логин или пароль!");
                         Console.ReadKey();
+                        return;
+                       
+                        
+                   
+
                     }
+    
+                    
+                    Console.WriteLine($"Добро пожаловать, {username}");
+                    Console.ReadKey();
+                    UIHelper.ShowLoadingAnimation(3.55);
+                    result.UserMenu.ShowMenu();
+                    
                 }
                 else if (choice == 1) // Зарегистрироваться
                 {
                     Console.Clear();
-                   registrationService.RegisterUser(); // реализуй регистрацию через AuthService
+                    registrationService.RegisterUser(); // реализуй регистрацию через AuthService
                 }
                 else // Выход
                 {

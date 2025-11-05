@@ -1,4 +1,5 @@
-﻿using System;
+﻿using StoreApp.Services;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,7 +9,7 @@ namespace StoreApp.Interface
 {
     public interface IAuthService
     {
-        IUserMenu Authenticate(string username, string password);
+       AuthenticationResult AuthenticateUser(string username, string password);
 
     }
 }

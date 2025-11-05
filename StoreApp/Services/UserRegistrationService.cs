@@ -22,19 +22,6 @@ namespace StoreApp.Services
             _users = _dataManager.LoadUsers();
         }
 
-        
-
-      //  private List<UserAccount> users;
-
-        //public static string GetMd5Hash(string input)
-        //{
-        //    using var md5 = MD5.Create();
-        //    var hash = md5.ComputeHash(Encoding.UTF8.GetBytes(input));
-        //    return BitConverter.ToString(hash).Replace("-", "").ToLowerInvariant();
-        //}
-
-
-
         public void RegisterUser()
         {
             Console.Clear();
@@ -85,17 +72,17 @@ namespace StoreApp.Services
             {
                 Username = login,
                 PasswordHash = AuthService.GetMd5Hash(password),
-                Role = role
+                Role = role,
+                IsBanned = false
+
             };
 
             _users.Add(newUser);
             _dataManager.SaveUsers(_users);
 
-            // ✅ Сохраняем в реальный путь
             var dataPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", "users.json");
             string json = JsonSerializer.Serialize(_users, new JsonSerializerOptions { WriteIndented = true });
 
-            // Console.WriteLine($"DEBUG PATH: {Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", "users.json")}");
             Console.ReadKey();
             File.WriteAllText(dataPath, json);
 

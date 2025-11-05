@@ -12,6 +12,7 @@ namespace StoreApp.Models
         public string Username { get; set; }
         public string PasswordHash { get; set; }  // не сам пароль, а его хэш
         public string Role { get; set; }          // "admin" или "customer"
+        public bool IsBanned { get; set; }
         public List<CartItem> Cart { get; set; } = new List<CartItem>();
 
         public List<Order> Orders { get; set; } = new();   

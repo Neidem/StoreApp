@@ -45,16 +45,7 @@ namespace StoreApp.Services
                 var selectedCategory = _categories.ElementAt(choice);
                 ShowProductsByCategory(selectedCategory.Id, user);
             }
-            //foreach (var p  in _categories)
-            //Console.WriteLine($"{p.Id}:{p.Name}");
-
-
-        }
-
-        public void AddProduct(Product product)
-        {
-            _products.Add(product);
-            _dataManager.SaveProducts(_products);
+    
         }
 
         public bool ShowProductsByCategory(int categoryId, UserAccount user)
@@ -86,12 +77,7 @@ namespace StoreApp.Services
                 if (!ShowProductsActions(selectedProduct, user))
                     return false;
                 // ShowProductsActions(selectedProduct, user);
-
-
             }
-
-
-
         }
 
         public bool ShowProductsActions(Product product, UserAccount user)
@@ -127,9 +113,6 @@ namespace StoreApp.Services
                         Console.Clear();
                         return true;
                 }
-
-                // пользователь нажал “Назад”
-               
 
             }
         }

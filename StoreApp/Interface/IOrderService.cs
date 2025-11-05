@@ -17,5 +17,7 @@ namespace StoreApp.Interface
         List<Order> LoadOrders(string username);
         bool ShowOrderActions(UserAccount user, Order order, Product product);
         void CancelOrder(UserAccount user, Order order);
+        List<Order> GetOrderByUsername(string username);
+
     }
 }

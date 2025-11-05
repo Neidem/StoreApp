@@ -7,10 +7,9 @@ using System.Threading.Tasks;
 
 namespace StoreApp.Interface
 {
-    public interface ICartService
+    public interface IAdminUserService
     {
-        void AddToCart(UserAccount user, int productId, int quantity);
-        bool ShowCart(UserAccount user);
+        bool ViewAllUsers(UserAccount Admin);
         
 
     }

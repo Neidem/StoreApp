@@ -10,35 +10,38 @@ namespace StoreApp.Models
 {
     class Admin : UserAccount,IUserMenu
     {
+        private readonly IAdminStoreService _adminStore;
+        private readonly IAdminUserService _adminUser;
+
+        public Admin()
+        {
+            _adminStore = DependencyContainer.GetAdminStoreService();
+            _adminUser = DependencyContainer.GetAdminUserService();
+        }
         public override void ShowMenu()
         {
             while (true)
             {
                 int choice = UIHelper.MenuSelect(new[]
                 {
-                    "Добавить:",
+                    "Действие с товаром:",
                     "Просмотреть список пользователей",
-                    "Удалить:",
-                    "Просмотреть список заказов",
                     "Выйти"
-                }, $"Меню администратора {Username}");
+                }, $"Меню администратора [{Username}]");
 
                 switch (choice)
                 {
                     case 0:
-                        Console.WriteLine("Добавление пользователя...");
-                        // вызвать метод из AuthService
+                        Console.Clear();
+                        _adminStore.ShowProductMenu(this);
                         Console.ReadKey();
                         break;
                     case 1:
-                        Console.WriteLine("Список пользователей (позже добавим)");
+                        UIHelper.ShowLoadingAnimation(1.55); // имитация загрузки
+                        _adminUser.ViewAllUsers(this);
                         Console.ReadKey();
                         break;
                     case 2:
-                        Console.WriteLine("Удаление пользователя...");
-                        Console.ReadKey();
-                        break;
-                    case 3:
 
                         return; // выход из меню
                 }

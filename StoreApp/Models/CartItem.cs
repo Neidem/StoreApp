@@ -9,6 +9,7 @@ namespace StoreApp.Models
     public class CartItem
     {
         public int ProductId { get; set; }
+        public string Username { get; set; }
         public int Quantity { get; set; }   
     }
 }

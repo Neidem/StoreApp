@@ -12,6 +12,7 @@ namespace StoreApp.Interface
     public interface IDataManager
     {
         // Пользователи
+
         List<UserAccount> LoadUsers();
         void SaveUsers(List<UserAccount> users);
         //

@@ -119,16 +119,30 @@ namespace StoreApp.Services
         //    return null;
         //}
 
-        public IUserMenu Authenticate(string username, string password)
+        public AuthenticationResult AuthenticateUser(string username, string password)
         {
-            var user = _users.FirstOrDefault(u => u.Username == username);
-            if (user != null && user.PasswordHash == GetMd5Hash(password))
+            var user = _users.FirstOrDefault(u => u.Username == username && u.PasswordHash == GetMd5Hash(password));
+           
+            if (user == null)
             {
-                return user.Role == "admin"
-                    ? new Admin { Username = user.Username, Role = user.Role }
-                    : new Customer { Username = user.Username, Role = user.Role };
+                return new AuthenticationResult { Succes = false };
             }
-            return null;
+
+            if (user.IsBanned)
+            {
+                return new AuthenticationResult { Succes =  false, IsBanned = true };
+            }
+
+            IUserMenu menu = user.Role == "admin"
+              ? new Admin { Username = user.Username, Role = user.Role }
+              : new Customer { Username = user.Username, Role = user.Role };
+
+            return new AuthenticationResult
+            {
+                Succes = true,
+                UserMenu = menu
+            };
+
         }
 
         public static string GetMd5Hash(string input)

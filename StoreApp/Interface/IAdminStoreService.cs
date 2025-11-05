@@ -7,11 +7,12 @@ using System.Threading.Tasks;
 
 namespace StoreApp.Interface
 {
-    public interface ICartService
+   public interface IAdminStoreService : IStoreService
     {
-        void AddToCart(UserAccount user, int productId, int quantity);
-        bool ShowCart(UserAccount user);
+        void AddProduct(string name, decimal price, int quantity, int categoryId);
+        bool ShowProductMenu(UserAccount user);
         
+       
 
     }
 }

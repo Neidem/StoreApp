@@ -11,11 +11,11 @@ namespace StoreApp.Services
 
         private List<Order> _orders;
 
-        public int Id { get; set; }
-        public string Username { get; set; } // кто сделал заказ
-        public List<CartItem> Items { get; set; } = new();
-        public decimal TotalPrice { get; set; }
-        public DateTime CreatedAt { get; set; } = DateTime.Now;
+        //public int Id { get; set; }
+        //public string Username { get; set; } // кто сделал заказ
+        //public List<CartItem> Items { get; set; } = new();
+        //public decimal TotalPrice { get; set; }
+        //public DateTime CreatedAt { get; set; } = DateTime.Now;
 
         public OrderService(IDataManager dataManager)
         {
@@ -123,6 +123,12 @@ namespace StoreApp.Services
                 });
 
 
+        }
+
+        public List<Order> GetOrderByUsername(string username)
+        {
+            var orders = LoadOrders(username);
+            return orders.Where(o=>o.Username.Equals(username, StringComparison.OrdinalIgnoreCase)).ToList();
         }
 
         public bool ViewOrders(UserAccount user)

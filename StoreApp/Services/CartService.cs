@@ -49,7 +49,11 @@ namespace StoreApp.Services
             }
             else
             {
-                carts[user.Username].Add(new CartItem { ProductId = productId, Quantity = quantity });
+                carts[user.Username].Add(new CartItem {
+                    ProductId = productId,
+                    Username = user.Username,
+                    Quantity = quantity 
+                });
 
 
                 Console.WriteLine($" {product.Name} добавлен в корзину ({quantity} шт).");
@@ -60,15 +64,16 @@ namespace StoreApp.Services
             Console.ReadKey(true);
         }
 
+       
 
-        public void ShowCart(UserAccount user)
+        public bool ShowCart(UserAccount user)
         {
             Console.Clear();
             var carts = _dataManager.LoadCarts();
             if (!carts.ContainsKey(user.Username) || carts[user.Username].Count == 0)
             {
                 Console.WriteLine("Корзина пуста");
-                return;
+                return true;
             }
 
             while (true)
@@ -110,10 +115,15 @@ namespace StoreApp.Services
                     continue;
                 }
 
-                ShowCartItemActions(user, selectedProduct);
+               return ShowCartItemActions(user, selectedProduct);
 
             }
+
+            return false;
         }
+
+        
+
         public void ClearCart() => _cartItems.Clear();
 
         public bool ShowCartItemActions(UserAccount user, Product product)

@@ -11,8 +11,8 @@ namespace StoreApp.Interface
     {
         List<Product> GetAllProducts();
         bool ShowCategories(UserAccount user);
-       bool ShowProductsByCategory(int catId, UserAccount user);
-        void AddProduct(Product product);
+        bool ShowProductsByCategory(int catId, UserAccount user);
+        //void AddProduct(Product product);
 
     }
 }

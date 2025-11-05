@@ -8,7 +8,6 @@ namespace StoreApp
     {
         public static IDataManager GetDataManager() =>
             new JsonDataManager();
-        
         public static IAuthService GetAuthService() =>
             new AuthService(GetDataManager());
         public static IUserRegistrationService GetRegistrationService() =>
@@ -19,6 +18,11 @@ namespace StoreApp
             new OrderService(GetDataManager());
         public static IStoreService GetStoreService() =>
             new StoreService(GetDataManager(), GetCartService(),GetOrderService());
+
+        public static IAdminStoreService GetAdminStoreService()=> 
+            new AdminStoreService(GetDataManager());
+        public static IAdminUserService GetAdminUserService() =>
+            new AdminUserService(GetDataManager(),GetOrderService(),GetCartService());
         
 
     }
