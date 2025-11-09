@@ -1,5 +1,6 @@
 ﻿using StoreApp.Helpers;
 using StoreApp.Interface;
+using StoreApp.Log;
 using StoreApp.Models;
 
 namespace StoreApp.Services
@@ -8,10 +9,12 @@ namespace StoreApp.Services
     {
 
         private readonly IDataManager _dataManager;
+        private readonly ILogger _logger;
 
-        public AdminStoreService(IDataManager dataManager)
+        public AdminStoreService(IDataManager dataManager, ILogger logger)
         {
             _dataManager = dataManager;
+            _logger = logger;
         }
 
         public List<Product> GetAllProducts()
@@ -19,36 +22,6 @@ namespace StoreApp.Services
             return _dataManager.LoadProducts();
         }
 
-        public bool ShowProductMenu(UserAccount user)
-        {
-            while (true)
-            {
-                int choice = UIHelper.MenuSelect(new[]
-                {
-                "Добавить товар",
-                "Редактировать товар",
-                "Удалить товар",
-                "Назад"
-
-            }, "Управление товарами ");
-
-                switch (choice)
-                {
-                    case 0:
-                        CreateProductInteractive();
-                        break;
-                    case 1:
-                        EditProductInteractive();
-                        break;
-                    case 2:
-                        IdRemove();
-                        break;
-                    case 3:
-                        return true;
-                   
-                }
-            }
-        }
 
         public bool ShowCategories(UserAccount user)
         {
@@ -82,9 +55,9 @@ namespace StoreApp.Services
             ;
         }
 
-        private void CreateProductInteractive()
+        public void CreateProductInteractive()
         {
-            Console.Clear();
+            ConsoleHelper.ClearUIArea(3);
             Console.WriteLine("Добавление товара: \n");
 
             Console.Write("Введите название товара");
@@ -102,7 +75,7 @@ namespace StoreApp.Services
             AddProduct(name, price, quantity, categoryId);
         }
 
-        public void AddProduct(string name, decimal price, int quantity, int categoryId)
+        private void AddProduct(string name, decimal price, int quantity, int categoryId)
         {
             var products = _dataManager.LoadProducts();
             var newProduct = new Product
@@ -122,9 +95,9 @@ namespace StoreApp.Services
             Console.ReadKey();
         }
 
-        private bool EditProductInteractive()
+        public bool EditProductInteractive()
         {
-            Console.Clear();
+            ConsoleHelper.ClearUIArea(3);
             
             if (!UIHelper.TryReadInt("Введите ID товара", out int id))
                 return false;
@@ -139,7 +112,7 @@ namespace StoreApp.Services
             }
             while (true)
             {
-                Console.Clear();
+                ConsoleHelper.ClearUIArea(3);
 
                 int choice = UIHelper.MenuSelect(new[]
                 {
@@ -255,7 +228,7 @@ namespace StoreApp.Services
 
         }
 
-        private bool IdRemove()
+        public bool IdRemove()
         {
             Console.WriteLine("Введите Id товар ");
             int.TryParse(Console.ReadLine(), out int id);
@@ -263,7 +236,7 @@ namespace StoreApp.Services
             return RemoveProduct(id);
         }
 
-        public bool RemoveProduct(int productId)
+        private bool RemoveProduct(int productId)
         {
             var products = _dataManager.LoadProducts();
             var product = products.FirstOrDefault(p => p.Id == productId);
@@ -290,6 +263,7 @@ namespace StoreApp.Services
                         _dataManager.SaveProducts(products);
                         Console.WriteLine($"\n Товар '{product.Name}' удалён успешно.");
                         Console.ReadKey();
+                        _logger.Info(LogEvents.DeleteProduct(product.Name));
                         return true;
 
                     case 1:

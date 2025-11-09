@@ -9,10 +9,15 @@ namespace StoreApp.Interface
 {
    public interface IAdminStoreService : IStoreService
     {
-        void AddProduct(string name, decimal price, int quantity, int categoryId);
-        bool ShowProductMenu(UserAccount user);
+       // void AddProduct(string name, decimal price, int quantity, int categoryId);
         
-       
+        void CreateProductInteractive();
+        bool EditProductInteractive();
+        
+        bool IdRemove();
+
+
+
 
     }
 }

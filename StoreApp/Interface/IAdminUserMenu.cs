@@ -7,9 +7,8 @@ using System.Threading.Tasks;
 
 namespace StoreApp.Interface
 {
-    public interface IAuthService
+    public interface IAdminUserMenu
     {
-       AuthenticationResult AuthenticateUser(string username, string password);
-
+        bool ViewAllUsers(UserAccount user);
     }
 }

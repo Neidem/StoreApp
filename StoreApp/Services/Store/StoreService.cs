@@ -2,7 +2,7 @@
 using StoreApp.Interface;
 using StoreApp.Models;
 
-namespace StoreApp.Services
+namespace StoreApp.Services.Store
 {
     class StoreService : IStoreService
     {
@@ -45,7 +45,7 @@ namespace StoreApp.Services
                 var selectedCategory = _categories.ElementAt(choice);
                 ShowProductsByCategory(selectedCategory.Id, user);
             }
-    
+
         }
 
         public bool ShowProductsByCategory(int categoryId, UserAccount user)
@@ -59,7 +59,7 @@ namespace StoreApp.Services
             }
             while (true)
             {
-                Console.Clear();
+                ConsoleHelper.ClearUIArea(3);
                 Console.WriteLine($"Товары категории: {_categories.First(c => c.Id == categoryId).Name}");
                 var countProduct = products
                     .Select(p => $"{p.Id}:{p.Name} - {p.Price}руб (Остаток {p.Quantity})")
@@ -84,7 +84,7 @@ namespace StoreApp.Services
         {
             while (true)
             {
-                Console.Clear();
+                ConsoleHelper.ClearUIArea(3);
                 int action = UIHelper.MenuSelect(new[]
                 {
                     $"Добавить \"{product.Name}\" в корзину",
@@ -96,8 +96,8 @@ namespace StoreApp.Services
                 {
                     case 0:
                         _cartService.AddToCart(user, product.Id, 1);
-                        Console.Clear();
-                      ShowCategories(user);
+                        ConsoleHelper.ClearUIArea(3);
+                        ShowCategories(user);
                         break;
 
                     case 1:
@@ -105,12 +105,12 @@ namespace StoreApp.Services
 
                         Console.WriteLine("Заказ оформлен");
                         Console.ReadKey(true);
-                        Console.Clear();
-                        
+                        ConsoleHelper.ClearUIArea(3);
+
                         ShowCategories(user);
                         break;
                     case 2:
-                        Console.Clear();
+                        ConsoleHelper.ClearUIArea(3);
                         return true;
                 }
 

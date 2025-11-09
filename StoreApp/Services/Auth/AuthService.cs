@@ -3,9 +3,9 @@ using StoreApp.Models;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace StoreApp.Services
+namespace StoreApp.Services.Auth
 {
-    class AuthService : IAuthService
+   public class AuthService : IAuthService
     {
         private readonly IDataManager _dataManager;
         private readonly List<UserAccount> _users;
@@ -40,7 +40,7 @@ namespace StoreApp.Services
 
         //public void RegisterUser()
         //{
-        //    Console.Clear();
+        //    ConsoleHelper.ClearUIArea(3);
         //    Console.WriteLine("=== Добавление нового пользователя ===");
 
         //    string login;
@@ -140,6 +140,7 @@ namespace StoreApp.Services
             return new AuthenticationResult
             {
                 Succes = true,
+                User = user,
                 UserMenu = menu
             };
 

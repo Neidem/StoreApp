@@ -1,5 +1,6 @@
 ﻿using StoreApp.Helpers;
 using StoreApp.Interface;
+using StoreApp.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +10,7 @@ using System.Threading.Tasks;
 
 
 
-namespace StoreApp.Models
+namespace StoreApp.Services.Users
 {
   public  class Customer : UserAccount,IUserMenu
     {
@@ -25,8 +26,7 @@ namespace StoreApp.Models
 
         public override void ShowMenu()
         {
-           
-            
+                      
 
             while (true)
             {
@@ -63,7 +63,7 @@ namespace StoreApp.Models
                         Console.ReadKey();
                         break;
                     case 3:
-                        Console.Clear();
+                        ConsoleHelper.ClearUIArea(3);
 
                         return; // выход из меню
                 }

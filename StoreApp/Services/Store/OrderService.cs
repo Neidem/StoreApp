@@ -1,69 +1,21 @@
 ﻿using StoreApp.Helpers;
 using StoreApp.Interface;
+using StoreApp.Log;
 using StoreApp.Models;
 
-namespace StoreApp.Services
+namespace StoreApp.Services.Store
 {
     public class OrderService : IOrderService
     {
         private readonly IDataManager _dataManager;
-        private readonly IStoreService _storeService;
+        private readonly ILogger _logger;
 
-        private List<Order> _orders;
-
-        //public int Id { get; set; }
-        //public string Username { get; set; } // кто сделал заказ
-        //public List<CartItem> Items { get; set; } = new();
-        //public decimal TotalPrice { get; set; }
-        //public DateTime CreatedAt { get; set; } = DateTime.Now;
-
-        public OrderService(IDataManager dataManager)
+        public OrderService(IDataManager dataManager, ILogger logger)
         {
             _dataManager = dataManager;
-            //  _orders = _dataManager.LoadOrders();
+            _logger = logger;
         }
 
-        //public void AddToCart(UserAccount user, int productId, int quantity)
-        //{
-        //    var product = _storeService.GetAllProducts().FirstOrDefault(p => p.Id == productId);
-
-        //    if (product == null)
-        //    {
-
-        //    }
-        //}
-
-        //public void RemoveFromCart(UserAccount user, int productId)
-        //{
-        //    var item = user.Cart.FirstOrDefault(c => c.ProductId == productId);
-        //    if (item != null)
-        //    {
-        //        user.Cart.Remove(item);
-        //        Console.WriteLine("🗑️ Товар удалён из корзины.");
-        //    }
-        //    else
-        //    {
-        //        Console.WriteLine("❌ Товар не найден в корзине.");
-        //    }
-
-        //}
-
-        //public void ViewCart(UserAccount user)
-        //{
-        //    if(!user.Cart.Any())
-        //    {
-        //        Console.WriteLine("🛒 Корзина пуста.");
-        //        return;
-        //    }
-
-        //    Console.WriteLine("");
-        //    foreach (var item in user.Cart)
-        //    {
-        //        var product = _storeService.GetAllProducts().FirstOrDefault(p => p.Id == item.ProductId);
-        //        Console.WriteLine($"{product.Name} - {item.Quantity} {product.Price} = {item.Quantity * product.Price}");
-        //    }
-
-        //}
 
         public async Task PlaceOrder(UserAccount user, int productId, int quantity)
         {
@@ -118,6 +70,7 @@ namespace StoreApp.Services
 
                         }
                     }
+                    _logger.Info(LogEvents.OrderCreated(user.Username, product.Name));
                     _dataManager.SaveCarts(carts);
 
                 });
@@ -128,12 +81,12 @@ namespace StoreApp.Services
         public List<Order> GetOrderByUsername(string username)
         {
             var orders = LoadOrders(username);
-            return orders.Where(o=>o.Username.Equals(username, StringComparison.OrdinalIgnoreCase)).ToList();
+            return orders.Where(o => o.Username.Equals(username, StringComparison.OrdinalIgnoreCase)).ToList();
         }
 
         public bool ViewOrders(UserAccount user)
         {
-            Console.Clear();
+            ConsoleHelper.ClearUIArea(3);
             var orders = LoadOrders(user.Username);
 
 
@@ -145,7 +98,7 @@ namespace StoreApp.Services
             }
             while (true)
             {
-                Console.Clear();
+                ConsoleHelper.ClearUIArea(3);
                 Console.WriteLine($"\n Ваши заказы: {user.Username}");
 
 
@@ -171,15 +124,15 @@ namespace StoreApp.Services
 
                 int choice = UIHelper.MenuSelect(menuItems.ToArray(), "Выберите действие");
 
-                if (choice == menuItems.Count - 1) 
+                if (choice == menuItems.Count - 1)
                     return false;
 
                 var selectedOrder = orders[choice];
                 var selectedProduct = products.FirstOrDefault(p => p.Id == selectedOrder.ProductId);
-                if (selectedProduct == null) 
+                if (selectedProduct == null)
                     continue;
 
-                if(!ShowOrderActions(user, selectedOrder, selectedProduct))
+                if (!ShowOrderActions(user, selectedOrder, selectedProduct))
                     return false;
             }
 
@@ -197,7 +150,7 @@ namespace StoreApp.Services
         {
             while (true)
             {
-                Console.Clear();
+                ConsoleHelper.ClearUIArea(3);
                 Console.WriteLine($" Заказ: {product.Name}");
                 Console.WriteLine($"Цена: {product.Price} руб × {order.Quantity} = {product.Price * order.Quantity} руб\n");
 
@@ -213,10 +166,10 @@ namespace StoreApp.Services
                         CancelOrder(user, order);
                         Console.ReadKey();
                         ViewOrders(user);
-                        Console.Clear();
+                        ConsoleHelper.ClearUIArea(3);
                         break;
                     case 1:
-                        Console.Clear();
+                        ConsoleHelper.ClearUIArea(3);
                         ViewOrders(user);
                         return false;
                 }

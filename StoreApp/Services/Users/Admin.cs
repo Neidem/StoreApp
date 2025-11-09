@@ -5,18 +5,20 @@ using System.Text;
 using System.Threading.Tasks;
 using StoreApp.Helpers;
 using StoreApp.Interface;
+using StoreApp.Models;
 
-namespace StoreApp.Models
+namespace StoreApp.Services.Users
 {
     class Admin : UserAccount,IUserMenu
     {
-        private readonly IAdminStoreService _adminStore;
-        private readonly IAdminUserService _adminUser;
+        private readonly IAdminStoreMenu _adminStoreMenu;
+        private readonly IAdminUserMenu _adminUserMenu;
+
 
         public Admin()
         {
-            _adminStore = DependencyContainer.GetAdminStoreService();
-            _adminUser = DependencyContainer.GetAdminUserService();
+           _adminStoreMenu = DependencyContainer.GetAdminStoreMenu();
+           _adminUserMenu = DependencyContainer.GetAdminUserMenu(); 
         }
         public override void ShowMenu()
         {
@@ -25,20 +27,20 @@ namespace StoreApp.Models
                 int choice = UIHelper.MenuSelect(new[]
                 {
                     "Действие с товаром:",
-                    "Просмотреть список пользователей",
+                    "Список всех пользователей",
                     "Выйти"
                 }, $"Меню администратора [{Username}]");
 
                 switch (choice)
                 {
                     case 0:
-                        Console.Clear();
-                        _adminStore.ShowProductMenu(this);
+                        ConsoleHelper.ClearUIArea(3);
+                        _adminStoreMenu.ShowProductMenu(this);
                         Console.ReadKey();
                         break;
                     case 1:
-                        UIHelper.ShowLoadingAnimation(1.55); // имитация загрузки
-                        _adminUser.ViewAllUsers(this);
+                       // UIHelper.ShowLoadingAnimation(1.55); // имитация загрузки
+                        _adminUserMenu.ViewAllUsers(this);
                         Console.ReadKey();
                         break;
                     case 2:

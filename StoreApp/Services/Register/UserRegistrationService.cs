@@ -1,14 +1,10 @@
-﻿using StoreApp.Models;
-using System;
-using System.Collections.Generic;
-using System.Security.Cryptography;
-using System.Linq;
-using System.Text;
-using System.Text.Json;
-using System.Threading.Tasks;
+﻿using StoreApp.Helpers;
 using StoreApp.Interface;
+using StoreApp.Models;
+using StoreApp.Services.Auth;
+using System.Text.Json;
 
-namespace StoreApp.Services
+namespace StoreApp.Services.Register
 {
     internal class UserRegistrationService : IUserRegistrationService
     {
@@ -24,7 +20,7 @@ namespace StoreApp.Services
 
         public void RegisterUser()
         {
-            Console.Clear();
+            ConsoleHelper.ClearUIArea(3);
             Console.WriteLine("=== Добавление нового пользователя ===");
 
             string login;
@@ -65,7 +61,7 @@ namespace StoreApp.Services
                     break;
                 else
                     Console.WriteLine(" Некорректная роль!");
-            } 
+            }
             while (true);
 
             var newUser = new UserAccount
@@ -83,11 +79,11 @@ namespace StoreApp.Services
             var dataPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", "users.json");
             string json = JsonSerializer.Serialize(_users, new JsonSerializerOptions { WriteIndented = true });
 
-            Console.ReadKey();
+
             File.WriteAllText(dataPath, json);
 
             Console.WriteLine(" Пользователь успешно добавлен!");
-            Console.ReadKey();
+            UIHelper.ShowLoadingAnimation(0.35);
         }
 
 

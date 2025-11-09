@@ -1,21 +1,24 @@
 ﻿using StoreApp.Helpers;
 using StoreApp.Interface;
+using StoreApp.Log;
 using StoreApp.Models;
 
-namespace StoreApp.Services
+namespace StoreApp.Services.Store
 {
     public class CartService : ICartService
     {
         private readonly IDataManager _dataManager;
         private readonly IOrderService _orderService;
+        private readonly ILogger _logger;
 
         //private readonly IStoreService _storeService;
         private readonly List<Product> _cartItems = new();
 
-        public CartService(IDataManager dataManager, IOrderService orderService)
+        public CartService(IDataManager dataManager, IOrderService orderService, ILogger logger)
         {
             _orderService = orderService;
             _dataManager = dataManager;
+            _logger = logger;
         }
 
         public void AddToCart(UserAccount user, int productId, int quantity)
@@ -45,7 +48,8 @@ namespace StoreApp.Services
             if (existing != null)
             {
                 existing.Quantity += quantity;
-                Console.WriteLine($" Количество {product.Name} обновлено: теперь {existing.Quantity} шт.");
+                Console.WriteLine($" Количество {product.Name}" +
+                    $" обновлено: теперь {existing.Quantity} шт.");
             }
             else
             {
@@ -56,10 +60,8 @@ namespace StoreApp.Services
                 });
 
 
-                Console.WriteLine($" {product.Name} добавлен в корзину ({quantity} шт).");
-
-
             }
+            _logger.Info(LogEvents.AddToCart(user.Username, product.Name));
             _dataManager.SaveCarts(carts);
             Console.ReadKey(true);
         }
@@ -68,7 +70,7 @@ namespace StoreApp.Services
 
         public bool ShowCart(UserAccount user)
         {
-            Console.Clear();
+            ConsoleHelper.ClearUIArea(3);
             var carts = _dataManager.LoadCarts();
             if (!carts.ContainsKey(user.Username) || carts[user.Username].Count == 0)
             {
@@ -78,7 +80,7 @@ namespace StoreApp.Services
 
             while (true)
             {
-                Console.Clear();    
+                ConsoleHelper.ClearUIArea(3);    
                 Console.WriteLine("\n Товары в корзине:");
                 
                 var products = _dataManager.LoadProducts();
@@ -130,7 +132,7 @@ namespace StoreApp.Services
         {
             while (true)
             {
-                Console.Clear();
+                ConsoleHelper.ClearUIArea(3);
                 Console.WriteLine($" {product.Name}");
                 Console.WriteLine($"Цена: {product.Price} руб");
                
@@ -151,7 +153,7 @@ namespace StoreApp.Services
                         break;
                     case 1:
                         RemoveFromCart(user, product.Id,product.Name);
-                        Console.Clear();
+                        ConsoleHelper.ClearUIArea(3);
                         ShowCart(user);
                         return true;
                     case 2:

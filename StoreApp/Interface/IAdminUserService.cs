@@ -9,8 +9,7 @@ namespace StoreApp.Interface
 {
     public interface IAdminUserService
     {
-        bool ViewAllUsers(UserAccount Admin);
-        
-
+        bool ToggleBanUser(UserAccount user);
+        void DeleteUser(UserAccount user);
     }
 }

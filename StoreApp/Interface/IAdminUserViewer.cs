@@ -7,9 +7,10 @@ using System.Threading.Tasks;
 
 namespace StoreApp.Interface
 {
-    public interface IAuthService
+    public interface IAdminUserViewer
     {
-       AuthenticationResult AuthenticateUser(string username, string password);
+        bool ShowOrdersUser(UserAccount user);
+        bool ShowCartUser(UserAccount user);
 
     }
 }

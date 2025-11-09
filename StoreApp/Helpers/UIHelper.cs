@@ -13,7 +13,7 @@ namespace StoreApp.Helpers
             value = 0;
             while (true)
             {
-                Console.Clear();
+                ConsoleHelper.ClearUIArea(3);
                 Console.WriteLine($"{promt} (или Esc для выхода):");
 
                 var key= Console.ReadKey(intercept:true);
@@ -52,7 +52,7 @@ namespace StoreApp.Helpers
 
             do
             {
-                Console.Clear();
+                ConsoleHelper.ClearUIArea(3);
 
                 if (!string.IsNullOrEmpty(title))
                     Console.WriteLine(title + "\n");
@@ -84,7 +84,7 @@ namespace StoreApp.Helpers
         public static bool TryReadString(string promt, out string result)
         {
             result = string.Empty;
-            Console.Clear();
+            ConsoleHelper.ClearUIArea(3);
             Console.WriteLine($"{promt} (или ESc для выхода)");
 
             var key = Console.ReadKey(intercept: true);

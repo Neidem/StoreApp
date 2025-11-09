@@ -41,8 +41,6 @@ namespace StoreApp.Data
             return JsonSerializer.Deserialize<List<UserAccount>>(json) ?? new List<UserAccount>();
         }
 
-
-
         public Dictionary<string, List<CartItem>> LoadCarts()
         {
             if (!File.Exists(_cartFile))
