@@ -2,6 +2,7 @@
 using StoreApp.Models;
 using System.Security.Cryptography;
 using System.Text;
+using StoreApp.Services.Users;
 
 namespace StoreApp.Services.Auth
 {

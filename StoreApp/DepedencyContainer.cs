@@ -2,6 +2,9 @@
 using StoreApp.Interface;
 using StoreApp.Log;
 using StoreApp.Services;
+using StoreApp.Services.Auth;
+using StoreApp.Services.Register;
+using StoreApp.Services.Store;
 
 namespace StoreApp
 {
@@ -15,19 +18,19 @@ namespace StoreApp
                 new FileLogger()
                 );
         public static IApp GetApplication() =>
-            new Application (GetAuthService(),
+            new Application(GetAuthService(),
                 GetRegistrationService(),
                 GetLogger());
         public static IAuthService GetAuthService() =>
             new AuthService(GetDataManager());
         public static IUserRegistrationService GetRegistrationService() =>
             new UserRegistrationService(GetDataManager());
-       public static ICartService GetCartService() =>
-            new CartService(GetDataManager(),
-                GetOrderService(),
-                GetLogger()); 
+        public static ICartService GetCartService() =>
+             new CartService(GetDataManager(),
+                 GetOrderService(),
+                 GetLogger());
         public static IOrderService GetOrderService() =>
-            new OrderService(GetDataManager(),GetLogger());
+            new OrderService(GetDataManager(), GetLogger());
         public static IStoreService GetStoreService() =>
             new StoreService(GetDataManager(),
                 GetCartService(),
@@ -38,16 +41,16 @@ namespace StoreApp
                 GetAdminUserViewer());
         public static IAdminStoreMenu GetAdminStoreMenu() =>
              new AdminStoreMenu(GetAdminStoreService());
-        public static IAdminStoreService GetAdminStoreService()=> 
+        public static IAdminStoreService GetAdminStoreService() =>
             new AdminStoreService(GetDataManager(),
                 GetLogger());
         public static IAdminUserService GetAdminUserService() =>
             new AdminUserService(GetDataManager());
-         public static IAdminUserViewer GetAdminUserViewer() =>
-            new AdminUserViewer(GetDataManager(),
-                GetOrderService(),
-                GetCartService());
-       
+        public static IAdminUserViewer GetAdminUserViewer() =>
+           new AdminUserViewer(GetDataManager(),
+               GetOrderService(),
+               GetCartService());
+
 
     }
 
